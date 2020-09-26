@@ -1,7 +1,8 @@
 ![WALA logo](http://wala.sourceforge.net/wiki/images/9/94/WALA-banner.png)
 
 [![GitHub Actions status](https://github.com/wala/WALA/workflows/Continuous%20integration/badge.svg)](https://github.com/wala/WALA/actions?query=workflow%3A%22Continuous+integration%22) [![Build Status](https://travis-ci.org/wala/WALA.svg?branch=master)](https://travis-ci.org/wala/WALA) [![Join the chat at https://gitter.im/WALAHelp/Lobby](https://badges.gitter.im/WALAHelp/Lobby.svg)](https://gitter.im/WALAHelp/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
+-------------------------
+This is a modified version of WALA. It works for [GRAPA](https://github.com/drzhonghao/grapa).
 -------------------------
 
 The T. J. Watson Libraries for Analysis (WALA) provide static analysis capabilities for Java bytecode and related languages and for JavaScript. The system is licensed under the [Eclipse Public License](http://www.eclipse.org/legal/epl-v10.html), which has been approved by the [OSI](http://www.opensource.org/) (Open Source Initiative) as a fully certified open source license. The initial WALA infrastructure was independently developed as part of the DOMO research project at the [IBM T.J. Watson Research Center](http://www.research.ibm.com/). In 2006, [IBM](http://www.ibm.com/us/) donated the software to the community.
