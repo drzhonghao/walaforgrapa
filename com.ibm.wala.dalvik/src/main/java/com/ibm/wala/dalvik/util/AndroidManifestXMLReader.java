@@ -248,7 +248,8 @@ public class AndroidManifestXMLReader {
     private Set<Tag> allowedSubTags; // Delay init
     private static final Map<String, Tag> reverseMap = new HashMap<>(); // HashMapFactory.make(9);
 
-    Tag(
+    @SuppressWarnings("deprecation")
+	Tag(
         String tagName,
         ISubTags allowedSubTags,
         Set<Attr> relevant,

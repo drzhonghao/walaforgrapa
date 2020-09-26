@@ -188,6 +188,8 @@ public class AnalysisOptions {
   /** Should call graph construction handle arrays of zero-length differently? */
   private boolean handleZeroLengthArray = true;
 
+  private boolean onlyClientCode;
+
   // SJF: I'm not sure these factories and caches belong here.
   // TODO: figure out how to clean this up.
 
@@ -393,5 +395,13 @@ public class AnalysisOptions {
   /** Should call graph construction handle arrays of zero-length differently? */
   public void setHandleZeroLengthArray(boolean handleZeroLengthArray) {
     this.handleZeroLengthArray = handleZeroLengthArray;
+  }
+
+  public void setOnlyClientCode(boolean bOnlyClientCode) {
+    this.onlyClientCode = bOnlyClientCode;    
+  }
+  
+  public boolean isOnlyClientCode() {
+    return onlyClientCode;
   }
 }

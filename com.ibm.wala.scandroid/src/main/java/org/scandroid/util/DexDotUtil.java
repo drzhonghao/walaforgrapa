@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
-
+@SuppressWarnings("hiding")
 public class DexDotUtil extends DotUtil {
 
   /** possible output formats for dot */
@@ -34,7 +34,7 @@ public class DexDotUtil extends DotUtil {
 
   private static final DotOutputType outputType = DotOutputType.PDF;
 
-  private static int fontSize = 6;
+  private static int fontSize = 6; 
   private static final String fontColor = "black";
   private static final String fontName = "Arial";
 
@@ -245,7 +245,7 @@ public class DexDotUtil extends DotUtil {
     return Iterator2Collection.toSet(g.iterator());
   }
 
-  private static String getRankDir() {
+  protected static String getRankDir() {
     return null;
   }
 

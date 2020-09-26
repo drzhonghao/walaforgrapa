@@ -30,6 +30,7 @@ public class IntSetUtil {
         Class<? extends MutableIntSetFactory<?>> intSetFactoryClass =
             (Class<? extends MutableIntSetFactory<?>>)
                 Class.forName(System.getProperty(INT_SET_FACTORY_CONFIG_PROPERTY_NAME));
+        @SuppressWarnings("deprecation")
         MutableIntSetFactory<?> intSetFactory = intSetFactoryClass.newInstance();
         setDefaultIntSetFactory(intSetFactory);
       } catch (Exception e) {

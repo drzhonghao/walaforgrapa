@@ -308,7 +308,22 @@ public abstract class PropagationCallGraphBuilder implements CallGraphBuilder<In
       discoveredNodes = HashSetFactory.make();
       while (it.hasNext()) {
         CGNode n = it.next();
-        result |= addConstraintsFromNode(n, monitor);
+        if(this.options.isOnlyClientCode()){
+          //zhh
+          IMethod m = n.getMethod();
+          String line = m.toString();
+          if(line.startsWith("synthetic")||line.startsWith("<src-method")||line.indexOf("Test")>0){           
+            result |= addConstraintsFromNode(n, monitor);
+          }
+        } else if(this.options.getReflectionOptions().isApplicationClassesOnly()){
+            String line = n.toString();
+            if(line.indexOf("synthetic")>0||line.toString().indexOf("< Application")>0) {
+              result |= addConstraintsFromNode(n, monitor);
+            }
+          }
+        else {
+          result |= addConstraintsFromNode(n, monitor);
+        }
       }
     }
     return result;

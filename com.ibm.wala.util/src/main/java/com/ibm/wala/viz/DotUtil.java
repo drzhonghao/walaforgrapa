@@ -42,9 +42,9 @@ public class DotUtil {
 
   private static DotOutputType outputType = DotOutputType.PDF;
 
-  private static int fontSize = 6;
-  private static final String fontColor = "black";
-  private static final String fontName = "Arial";
+  protected static int fontSize = 6;
+  protected static final String fontColor = "black";
+  protected static final String fontName = "Arial";
 
   public static void setOutputType(DotOutputType outType) {
     outputType = outType;
@@ -59,7 +59,7 @@ public class DotUtil {
   }
 
   /** Some versions of dot appear to croak on long labels. Reduce this if so. */
-  private static final int MAX_LABEL_LENGTH = Integer.MAX_VALUE;
+  protected static final int MAX_LABEL_LENGTH = Integer.MAX_VALUE;
 
   /** @param <T> the type of a graph node */
   public static <T> void dotify(
@@ -246,7 +246,7 @@ public class DotUtil {
     return Iterator2Collection.toSet(g.iterator());
   }
 
-  private static String getRankDir() {
+  protected static String getRankDir() {
     return null;
   }
 
