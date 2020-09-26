@@ -5,7 +5,8 @@ Bundle-SymbolicName: com.ibm.wala.ide.jdt
 Bundle-Version: 1.5.6.qualifier
 Bundle-Activator: com.ibm.wala.ide.jdt.Activator
 Bundle-Vendor: %Bundle-Vendor
-Require-Bundle: com.ibm.wala.ide,
+Require-Bundle: com.ibm.wala.core,
+ com.ibm.wala.ide,
  org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
@@ -13,7 +14,10 @@ Require-Bundle: com.ibm.wala.ide,
  org.eclipse.pde.core,
  org.eclipse.ui.ide,
  org.eclipse.jdt.launching,
- org.eclipse.jdt
+ org.eclipse.jdt,
+ com.ibm.wala.cast;bundle-version="1.4.4",
+ com.ibm.wala.cast.java;bundle-version="1.4.4",
+ com.ibm.wala.cast.java.ecj;bundle-version="1.4.4"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: com.ibm.wala.cast.java.client,
@@ -37,7 +41,6 @@ Export-Package: com.ibm.wala.cast.java.client,
  com.ibm.wala.cast.java.ecj.util,
  com.ibm.wala.cast.java.translator.jdt,
  com.ibm.wala.cast.java.translator.jdt.ecj
-Bundle-ClassPath: .,
- target/dependency/com.ibm.wala.cast.java.jar,
- target/dependency/com.ibm.wala.cast.java.ecj.jar
+Bundle-ClassPath: .
+
 
