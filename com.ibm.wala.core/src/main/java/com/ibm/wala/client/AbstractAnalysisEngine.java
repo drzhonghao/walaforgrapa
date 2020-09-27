@@ -285,7 +285,10 @@ public abstract class AbstractAnalysisEngine<
 
   public CallGraph buildDefaultCallGraph()
       throws IllegalArgumentException, CancelException, IOException {
-    return defaultCallGraphBuilder().makeCallGraph(options, null);
+    X builder = defaultCallGraphBuilder();
+    cg = builder.makeCallGraph(options, null);
+    this.pointerAnalysis = builder.getPointerAnalysis();
+    return cg;
   }
 
   public IAnalysisCacheView getCache() {

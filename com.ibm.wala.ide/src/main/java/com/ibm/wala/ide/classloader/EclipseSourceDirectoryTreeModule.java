@@ -14,6 +14,7 @@ import com.ibm.wala.classLoader.FileModule;
 import com.ibm.wala.classLoader.SourceDirectoryTreeModule;
 import com.ibm.wala.ide.util.EclipseProjectPath;
 import java.io.File;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
@@ -36,6 +37,20 @@ public class EclipseSourceDirectoryTreeModule extends SourceDirectoryTreeModule 
                 .replace("*", "[^/]*")
                 .replace("~~~", ".*")
             + '$');
+  }
+
+  @Override
+  public Iterator<FileModule> getEntries() {  
+    
+    String path = rootIPath.toOSString();
+    if(!root.getAbsolutePath().endsWith(path)) {
+      int mark = path.indexOf("\\", 1);
+      path = path.substring(mark+1);
+      path = root.getAbsolutePath()+"/"+path;
+    }else {
+      path = root.getAbsolutePath();
+    }
+    return getEntriesRecursive(new File(path)).iterator();
   }
 
   private static Pattern[] interpretExcludes(IPath[] excludes) {

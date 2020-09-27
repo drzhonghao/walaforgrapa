@@ -46,7 +46,9 @@ public class AstJavaInvokeInstruction extends FixedParametersInvokeInstruction {
 
   @Override
   public void visit(IVisitor v) {
-    ((AstJavaInstructionVisitor) v).visitJavaInvoke(this);
+    if(v instanceof AstJavaInstructionVisitor) {
+      ((AstJavaInstructionVisitor) v).visitJavaInvoke(this);
+    }
   }
 
   @Override

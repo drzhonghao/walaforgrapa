@@ -233,7 +233,7 @@ public class ClassLoaderImpl implements IClassLoader {
           System.err.println("Excluding " + className);
         }
         continue;
-      }
+      } //zhh
 
       ShrikeClassReaderHandle entryReader = new ShrikeClassReaderHandle(entry);
 

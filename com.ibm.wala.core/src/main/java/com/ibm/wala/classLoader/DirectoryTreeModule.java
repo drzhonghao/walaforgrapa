@@ -39,7 +39,7 @@ public abstract class DirectoryTreeModule implements Module {
 
   protected abstract boolean includeFile(File file);
 
-  private Set<FileModule> getEntriesRecursive(File dir) {
+  protected Set<FileModule> getEntriesRecursive(File dir) {
     Set<FileModule> result = HashSetFactory.make();
     File[] files = dir.listFiles();
     if (files != null) {
@@ -63,7 +63,7 @@ public abstract class DirectoryTreeModule implements Module {
   }
 
   @Override
-  public Iterator<FileModule> getEntries() {
+  public Iterator<FileModule> getEntries() {    
     return getEntriesRecursive(root).iterator();
   }
 

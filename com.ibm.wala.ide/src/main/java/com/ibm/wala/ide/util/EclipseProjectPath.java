@@ -305,6 +305,24 @@ public abstract class EclipseProjectPath<E, P> {
       return p;
     }
 
+    IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+    String toMatch = p.toOSString();
+    int mark = toMatch.indexOf("\\", 2);
+    if(mark>0) {
+      toMatch = "\\"+toMatch.substring(1, mark);
+    }
+    for(IProject project:projects) {
+      IPath raw = project.getRawLocation();
+      if(raw!=null) {
+        IPath path = raw.makeAbsolute();
+        
+        if(path.toOSString().endsWith(toMatch)) {
+          absolutePath = path;
+          break;
+        }
+      }
+    }
+    
     IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(p);
     if (resource != null && resource.exists()) {
       absolutePath = resource.getLocation();
