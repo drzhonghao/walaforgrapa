@@ -93,7 +93,8 @@ public class AstLexicalRead extends AstLexicalAccess {
 
   @Override
   public void visit(IVisitor v) {
-    assert v instanceof AstInstructionVisitor;
-    ((AstInstructionVisitor) v).visitAstLexicalRead(this);
+    if(v instanceof AstInstructionVisitor) {
+      ((AstInstructionVisitor) v).visitAstLexicalRead(this);
+    }
   }
 }

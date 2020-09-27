@@ -2699,6 +2699,12 @@ public abstract class JDTJava2CAstTranslator<T extends Position> {
 
   private CAstNode visit(ConditionalExpression n, WalkContext context) {
     String var = "ceTemporary" + ceCounter++;
+    Expression exp = n.getThenExpression();
+    ITypeBinding expType = exp.resolveTypeBinding();
+    if(expType==null) {
+    	System.out.println("Here");
+    }
+    CAstType type = fTypeDict.getCAstTypeFor(expType);
     CAstNode declNode =
         makeNode(
             context,
@@ -2708,7 +2714,7 @@ public abstract class JDTJava2CAstTranslator<T extends Position> {
             fFactory.makeConstant(
                 new InternalCAstSymbol(
                     var,
-                    fTypeDict.getCAstTypeFor(n.getThenExpression().resolveTypeBinding()),
+                    type,
                     true)));
 
     context.addNameDecl(declNode);

@@ -21,7 +21,7 @@ import com.ibm.wala.util.collections.ComposedIterator;
 import com.ibm.wala.util.collections.FilterIterator;
 import com.ibm.wala.util.collections.MapIterator;
 import com.ibm.wala.util.collections.Pair;
-import com.ibm.wala.util.debug.Assertions;
+
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -33,9 +33,10 @@ public final class ConcreteTypeKey implements InstanceKey {
     if (type == null) {
       throw new IllegalArgumentException("type is null");
     }
-    if (type.isInterface()) {
-      Assertions.UNREACHABLE("unexpected interface: " + type);
-    }
+//    if (type.isInterface()) {
+//      Assertions.UNREACHABLE("unexpected interface: " + type); //zhh
+     
+//    }
     this.type = type;
   }
 

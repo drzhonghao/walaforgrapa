@@ -116,6 +116,8 @@ public class JDTIdentityMapper {
       return 'L' + type.getBinaryName().replace('.', '/'); // TODO:
     else if (type.isTypeVariable()) {
       return typeToTypeID(JDT2CAstUtils.getTypesVariablesBase(type, fAst));
+    }else if(type.isNullType()) {
+    	return type.getQualifiedName();
     }
     Assertions.UNREACHABLE(
         "typeToTypeID() encountered the type "

@@ -286,9 +286,14 @@ public abstract class AbstractAnalysisEngine<
   public CallGraph buildDefaultCallGraph()
       throws IllegalArgumentException, CancelException, IOException {
     X builder = defaultCallGraphBuilder();
-    cg = builder.makeCallGraph(options, null);
-    this.pointerAnalysis = builder.getPointerAnalysis();
-    return cg;
+    options.setOnlyClientCode(true);
+    if(options.getEntrypoints().iterator().hasNext()) {
+      cg = builder.makeCallGraph(options, null);
+      this.pointerAnalysis = builder.getPointerAnalysis();
+      return cg;
+    }else {
+      return null;
+    }
   }
 
   public IAnalysisCacheView getCache() {
