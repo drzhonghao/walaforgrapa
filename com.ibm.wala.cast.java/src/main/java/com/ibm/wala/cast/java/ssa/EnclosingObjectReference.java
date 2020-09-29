@@ -75,7 +75,9 @@ public class EnclosingObjectReference extends SSAInstruction {
 
   @Override
   public void visit(IVisitor v) {
-    ((AstJavaInstructionVisitor) v).visitEnclosingObjectReference(this);
+    if(v instanceof AstJavaInstructionVisitor) {
+      ((AstJavaInstructionVisitor) v).visitEnclosingObjectReference(this);
+    }
   }
 
   @Override

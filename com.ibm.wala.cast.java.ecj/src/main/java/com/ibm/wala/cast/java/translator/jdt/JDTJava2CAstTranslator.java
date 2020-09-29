@@ -113,6 +113,7 @@ import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionMethodReference;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -128,6 +129,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.Initializer;
 import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.LabeledStatement;
+import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
@@ -2120,6 +2122,18 @@ public abstract class JDTJava2CAstTranslator<T extends Position> {
     setPos(context, str, n);
     return str;
   }
+  
+  private CAstNode visit(LambdaExpression n, WalkContext context) {
+	  CAstNode str = fFactory.makeConstant(n.toString());
+	    setPos(context, str, n);
+	    return str;
+	}
+  
+  private CAstNode visit(ExpressionMethodReference n, WalkContext context) {
+	  CAstNode str = fFactory.makeConstant(n.getName());
+	  setPos(context, str, n);
+	  return str;
+	}
 
   private CAstNode visit(TypeLiteral n, WalkContext context) {
     String typeName = fIdentityMapper.typeToTypeID(n.resolveTypeBinding());
@@ -2928,6 +2942,8 @@ public abstract class JDTJava2CAstTranslator<T extends Position> {
     return result;
   }
 
+ 
+  
   private CAstNode visit(WhileStatement n, WalkContext context) {
     Expression cond = n.getExpression();
     Statement body = n.getBody();
@@ -3894,6 +3910,10 @@ public abstract class JDTJava2CAstTranslator<T extends Position> {
       return visit((VariableDeclarationFragment) n, context);
     } else if (n instanceof WhileStatement) {
       return visit((WhileStatement) n, context);
+    }else if(n instanceof LambdaExpression) {
+    	return visit((LambdaExpression) n, context);
+    }else if(n instanceof ExpressionMethodReference) {
+    	 return visit((ExpressionMethodReference) n, context);
     }
 
     // VariableDeclarationStatement handled as special case (returns multiple statements)
@@ -3903,7 +3923,13 @@ public abstract class JDTJava2CAstTranslator<T extends Position> {
     return null;
   }
 
-  private void visitNodeOrNodes(ASTNode n, WalkContext context, Collection<CAstNode> coll) {
+ 
+
+
+
+
+
+private void visitNodeOrNodes(ASTNode n, WalkContext context, Collection<CAstNode> coll) {
     if (n instanceof VariableDeclarationStatement)
       coll.addAll(visit((VariableDeclarationStatement) n, context));
     else coll.add(visitNode(n, context));

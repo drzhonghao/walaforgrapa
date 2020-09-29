@@ -161,7 +161,12 @@ public abstract class EclipseProjectPath<E, P> {
       String fileExtension) {
     if (includeSource) {
       List<Module> s = MapUtil.findOrCreateList(modules, loader);
-      s.add(new EclipseSourceDirectoryTreeModule(p, excludePaths, fileExtension));
+      try {
+        EclipseSourceDirectoryTreeModule treemodule = new EclipseSourceDirectoryTreeModule(p, excludePaths, fileExtension);
+        s.add(treemodule);
+      }catch(IllegalArgumentException e) {
+        System.err.println("Error in loading "+p);
+      }
     } else if (o != null) {
       File output = makeAbsolute(o).toFile();
       List<Module> s =

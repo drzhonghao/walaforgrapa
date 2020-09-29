@@ -514,34 +514,34 @@ public abstract class JavaSourceLoaderImpl extends ClassLoaderImpl {
         int lastQ = parents[i].lastIndexOf('/', lastLeftParen);
         String typeName = parents[i].substring(0, lastQ);
         final IClass cls = lookupClass(TypeName.string2TypeName(typeName));
-
-        String sig = parents[i].substring(lastQ);
-        int nameEnd = sig.indexOf('(');
-        String nameStr = sig.substring(1, nameEnd);
-        Atom name = Atom.findOrCreateUnicodeAtom(nameStr);
-
-        String descStr = sig.substring(nameEnd);
-        Descriptor desc = Descriptor.findOrCreateUTF8(Language.JAVA, descStr);
-
-        final Selector sel = new Selector(name, desc);
-
-        if (AstTranslator.DEBUG_LEXICAL)
-          System.err.println(("get " + typeName + ", " + nameStr + ", " + descStr));
-
-        final int hack = i;
-        result[i] =
-            new LexicalParent() {
-              @Override
-              public String getName() {
-                return parents[hack];
-              }
-
-              @Override
-              public AstMethod getMethod() {
-                return (AstMethod) cls.getMethod(sel);
-              }
-            };
-
+        if(cls!=null) {
+          String sig = parents[i].substring(lastQ);
+          int nameEnd = sig.indexOf('(');
+          String nameStr = sig.substring(1, nameEnd);
+          Atom name = Atom.findOrCreateUnicodeAtom(nameStr);
+  
+          String descStr = sig.substring(nameEnd);
+          Descriptor desc = Descriptor.findOrCreateUTF8(Language.JAVA, descStr);
+  
+          final Selector sel = new Selector(name, desc);
+  
+          if (AstTranslator.DEBUG_LEXICAL)
+            System.err.println(("get " + typeName + ", " + nameStr + ", " + descStr));
+  
+          final int hack = i;
+          result[i] =
+              new LexicalParent() {
+                @Override
+                public String getName() {
+                  return parents[hack];
+                }
+  
+                @Override
+                public AstMethod getMethod() {
+                  return (AstMethod) cls.getMethod(sel);
+                }
+              };
+        }
         if (AstTranslator.DEBUG_LEXICAL)
           System.err.println(("parent " + result[i].getName() + " is " + result[i].getMethod()));
       }
