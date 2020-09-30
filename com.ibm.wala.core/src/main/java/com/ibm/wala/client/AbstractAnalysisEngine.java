@@ -117,6 +117,8 @@ public abstract class AbstractAnalysisEngine<
       boolean savePointerAnalysis,
       IProgressMonitor monitor)
       throws IllegalArgumentException, CancelException {
+    this.options = options;
+    cache = makeDefaultCache();
     X builder = getCallGraphBuilder(cha, options, cache);
 
     cg = builder.makeCallGraph(options, monitor);

@@ -63,7 +63,6 @@ public class Runtime {
             return callStack;
           });
 
-  @SuppressWarnings("deprecation")
   private Runtime(String fileName, String filterFileName, String policyClassName) {
     try (final FileInputStream in = new FileInputStream(filterFileName)) {
       filter = new FileOfClasses(in);

@@ -14,6 +14,7 @@ import com.ibm.wala.classLoader.ClassLoaderFactory;
 import com.ibm.wala.classLoader.ClassLoaderFactoryImpl;
 import com.ibm.wala.classLoader.Language;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
+import com.ibm.wala.ipa.cha.ClassHierarchy.MissingSuperClassHandling;
 import com.ibm.wala.util.MonitorUtil.IProgressMonitor;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -71,6 +72,21 @@ public class ClassHierarchyFactory {
     return make(scope, factory, ClassHierarchy.MissingSuperClassHandling.NONE);
   }
 
+  public static IClassHierarchy makeWithPPA(AnalysisScope scope, ClassLoaderFactory factory) throws ClassHierarchyException {
+    // TODO Auto-generated method stub
+    return makeWithPPA(scope, factory, ClassHierarchy.MissingSuperClassHandling.NONE);
+  }
+  
+  private static IClassHierarchy makeWithPPA(AnalysisScope scope, ClassLoaderFactory factory, MissingSuperClassHandling superClassHandling) throws ClassHierarchyException, IllegalArgumentException {
+    if (scope == null) {
+      throw new IllegalArgumentException("null scope");
+    }
+    if (factory == null) {
+      throw new IllegalArgumentException("null factory");
+    }   
+    return new ClassHierarchy(scope, factory, null, new ConcurrentHashMap<>(), superClassHandling, true);
+  }
+
   private static ClassHierarchy make(
       AnalysisScope scope,
       ClassLoaderFactory factory,
@@ -119,7 +135,7 @@ public class ClassHierarchyFactory {
         languages,
         null,
         new ConcurrentHashMap<>(),
-        ClassHierarchy.MissingSuperClassHandling.NONE);
+        ClassHierarchy.MissingSuperClassHandling.NONE, false);
   }
 
   public static ClassHierarchy make(
@@ -152,4 +168,6 @@ public class ClassHierarchyFactory {
         new ConcurrentHashMap<>(),
         ClassHierarchy.MissingSuperClassHandling.NONE);
   }
+
+  
 }

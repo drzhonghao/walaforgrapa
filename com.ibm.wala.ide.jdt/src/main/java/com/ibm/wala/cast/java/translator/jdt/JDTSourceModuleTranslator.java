@@ -49,6 +49,9 @@ import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.util.config.SetOfClasses;
 import com.ibm.wala.util.debug.Assertions;
+
+import ca.mcgill.cs.swevo.ppa.PPAOptions;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -58,13 +61,19 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTRequestor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.PPAASTParser;
+import org.eclipse.jdt.core.dom.PPAEngine;
+import org.eclipse.jdt.core.dom.PPATypeRegistry;
+import org.eclipse.jdt.internal.core.JavaProject;
 
 /**
  * A SourceModuleTranslator whose implementation of loadAllSources() uses the PolyglotFrontEnd
@@ -186,6 +195,74 @@ public class JDTSourceModuleTranslator implements SourceModuleTranslator {
           units.toArray(new ICompilationUnit[0]), new String[0], new JdtAstToIR(proj), null);
     }
   }
+  
+  @Override
+  public void loadAllSourcesWithPPA(Set<ModuleEntry> modules) {
+    Map<IProject, Map<ICompilationUnit,EclipseSourceFileModule>> projectsFiles = new HashMap<>();
+    for (ModuleEntry m : modules) {
+      assert m instanceof EclipseSourceFileModule : "Expecing EclipseSourceFileModule, not " + m.getClass();
+      EclipseSourceFileModule entry = (EclipseSourceFileModule) m;
+      IProject proj = entry.getIFile().getProject();
+      if (!projectsFiles.containsKey(proj)) {
+        projectsFiles.put(proj, new HashMap<ICompilationUnit,EclipseSourceFileModule>());
+      }
+      projectsFiles.get(proj).put(JavaCore.createCompilationUnitFrom(entry.getIFile()), entry);
+    }
+
+    for (final Map.Entry<IProject,Map<ICompilationUnit,EclipseSourceFileModule>> proj : projectsFiles.entrySet()) {
+      IJavaProject p = JavaCore.create(proj.getKey());
+      PPATypeRegistry registry = new PPATypeRegistry((JavaProject)p);
+     
+      PPAASTParser parser2 = new PPAASTParser(AST.JLS11);
+      parser2.setStatementsRecovery(true);
+      parser2.setResolveBindings(true);
+      parser2.setProject(p);
+      PPAOptions option = new PPAOptions();
+      option.setAllowMemberInference(true);
+      option.setAllowCollectiveMode(true);
+      option.setAllowTypeInferenceMode(true);
+      option.setAllowMethodBindingMode(true);
+//      option.setAllowAnalyzeProject(true);
+      
+      Set<ICompilationUnit> units = proj.getValue().keySet();
+      
+      for(ICompilationUnit unit:units){
+        parser2.setSource(unit);
+        ASTNode ast = parser2.createAST(true, null); 
+        
+        PPAEngine ppaEngine = new PPAEngine(registry, option);
+        CompilationUnit cu = (CompilationUnit) ast;
+        ppaEngine.addUnitToProcess(cu);
+        ppaEngine.doPPA();       
+        //zhh translator
+//        TestVisitor visitor = new TestVisitor();
+//        ast.accept(visitor); 
+        try {
+          JDTJava2CAstTranslator<JdtPosition> jdt2cast = makeCAstTranslator(cu, proj.getValue().get(unit).getIFile(), unit.getUnderlyingResource().getLocation().toOSString());
+          final Java2IRTranslator java2ir = makeIRTranslator();
+          java2ir.translate(proj.getValue().get(unit), jdt2cast.translateToCAst());
+        } catch (JavaModelException e) {
+          e.printStackTrace();
+        }
+       
+//        if (! "true".equals(System.getProperty("wala.jdt.quiet"))) {
+//          IProblem[] problems = cu.getProblems();
+//          int length = problems.length;
+//          if (length > 0) {
+//            StringBuffer buffer = new StringBuffer();
+//            for (int i = 0; i < length; i++) {
+//              buffer.append(problems[i].getMessage());
+//              buffer.append('\n');
+//            }
+//            if (length != 0)
+//              System.err.println("Unexpected problems in " + unit.getElementName() + buffer.toString());
+//          }
+//        }
+        ppaEngine.reset();
+      }
+    }
+    
+  }
 
   protected Java2IRTranslator makeIRTranslator() {
     return new Java2IRTranslator(sourceLoader, exclusions);
@@ -206,4 +283,6 @@ public class JDTSourceModuleTranslator implements SourceModuleTranslator {
       }
     };
   }
+
+ 
 }

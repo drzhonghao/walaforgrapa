@@ -19,7 +19,7 @@ Export-Package: com.ibm.wala.shrike.bench,
  com.ibm.wala.shrikeCT,
  com.ibm.wala.sourcepos
 Require-Bundle: com.ibm.wala.util;resolution:=optional
-Bundle-RequiredExecutionEnvironment: JavaSE-14
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: src/,
  .
 Automatic-Module-Name: com.ibm.wala.shrike

@@ -37,9 +37,12 @@
  */
 package com.ibm.wala.cast.java.translator.jdt;
 
+
+
 import com.ibm.wala.cast.java.loader.JavaSourceLoaderImpl;
 import com.ibm.wala.cast.java.translator.SourceModuleTranslator;
 import com.ibm.wala.classLoader.IClassLoader;
+
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.types.ClassLoaderReference;
 
@@ -61,4 +64,6 @@ public class JDTSourceLoaderImpl extends JavaSourceLoaderImpl {
   protected SourceModuleTranslator getTranslator() {
     return new JDTSourceModuleTranslator(cha.getScope(), this, dump);
   }
+
+ 
 }

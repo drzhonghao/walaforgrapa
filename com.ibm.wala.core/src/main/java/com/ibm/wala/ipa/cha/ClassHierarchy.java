@@ -10,6 +10,7 @@
  */
 package com.ibm.wala.ipa.cha;
 
+
 import com.ibm.wala.classLoader.ArrayClass;
 import com.ibm.wala.classLoader.BytecodeClass;
 import com.ibm.wala.classLoader.ClassLoaderFactory;
@@ -190,7 +191,7 @@ public class ClassHierarchy implements IClassHierarchy {
       Map<TypeReference, Node> map,
       MissingSuperClassHandling superClassHandling)
       throws ClassHierarchyException, IllegalArgumentException {
-    this(scope, factory, Collections.singleton(language), progressMonitor, map, superClassHandling);
+    this(scope, factory, Collections.singleton(language), progressMonitor, map, superClassHandling, false);
   }
 
   ClassHierarchy(
@@ -200,7 +201,7 @@ public class ClassHierarchy implements IClassHierarchy {
       Map<TypeReference, Node> map,
       MissingSuperClassHandling superClassHandling)
       throws ClassHierarchyException, IllegalArgumentException {
-    this(scope, factory, scope.getLanguages(), progressMonitor, map, superClassHandling);
+    this(scope, factory, scope.getLanguages(), progressMonitor, map, superClassHandling, false);
   }
 
   ClassHierarchy(
@@ -209,12 +210,14 @@ public class ClassHierarchy implements IClassHierarchy {
       Collection<Language> languages,
       IProgressMonitor progressMonitor,
       Map<TypeReference, Node> map,
-      MissingSuperClassHandling superClassHandling)
+      MissingSuperClassHandling superClassHandling, boolean bPPA)
       throws ClassHierarchyException, IllegalArgumentException {
     // now is a good time to clear the warnings globally.
     // TODO: think of a better way to guard against warning leaks.
     Warnings.clear();
 
+   
+    
     this.map = map;
     this.superClassHandling = superClassHandling;
 
@@ -267,7 +270,13 @@ public class ClassHierarchy implements IClassHierarchy {
         }
 
         if (langNames.contains(ref.getLanguage())) {
-          IClassLoader icl = factory.getLoader(ref, this, scope);
+          String name = ref.getName().toString();
+          IClassLoader icl = null;
+          if(name.compareTo("Source")==0&&bPPA) {
+            icl = factory.getPPALoader(ref, this, scope);
+          }else {
+            icl = factory.getLoader(ref, this, scope);
+          }
           loaders[idx++] = icl;
 
           if (progressMonitor != null) {
@@ -303,6 +312,17 @@ public class ClassHierarchy implements IClassHierarchy {
     // perform numbering for subclass tests.
     numberTree();
     ReferenceCleanser.registerClassHierarchy(this);
+  }
+
+  public ClassHierarchy(AnalysisScope scope,
+      ClassLoaderFactory factory,
+      IProgressMonitor progressMonitor,
+      Map<TypeReference, Node> map,
+      MissingSuperClassHandling superClassHandling,
+      boolean bPPA)
+      throws ClassHierarchyException, IllegalArgumentException {
+    this(scope, factory, scope.getLanguages(), progressMonitor, map, superClassHandling, bPPA);
+    // TODO Auto-generated constructor stub
   }
 
   /** Add all classes in a class loader to the hierarchy. */

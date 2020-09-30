@@ -11,6 +11,7 @@
 package com.ibm.wala.classLoader;
 
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
+import com.ibm.wala.ipa.cha.ClassHierarchy;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.util.collections.HashMapFactory;
@@ -31,7 +32,7 @@ public class ClassLoaderFactoryImpl implements ClassLoaderFactory {
   private final SetOfClasses exclusions;
 
   /** A Mapping from ClassLoaderReference to IClassLoader */
-  private final HashMap<ClassLoaderReference, IClassLoader> map = HashMapFactory.make(3);
+  protected final HashMap<ClassLoaderReference, IClassLoader> map = HashMapFactory.make(3);
 
   /** @param exclusions A set of classes that class loaders should pretend don't exist. */
   public ClassLoaderFactoryImpl(SetOfClasses exclusions) {
@@ -156,4 +157,17 @@ public class ClassLoaderFactoryImpl implements ClassLoaderFactory {
   public SetOfClasses getExclusions() {
     return exclusions;
   }
+
+  @Override
+  public IClassLoader getPPALoader(ClassLoaderReference ref, ClassHierarchy classHierarchy, AnalysisScope scope)
+      throws IOException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
+
+ 
+
+  
 }

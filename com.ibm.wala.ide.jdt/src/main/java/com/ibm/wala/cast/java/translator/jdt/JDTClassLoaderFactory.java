@@ -43,6 +43,7 @@ import com.ibm.wala.classLoader.ClassLoaderFactoryImpl;
 import com.ibm.wala.classLoader.ClassLoaderImpl;
 import com.ibm.wala.classLoader.IClassLoader;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
+import com.ibm.wala.ipa.cha.ClassHierarchy;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.util.config.SetOfClasses;
@@ -79,5 +80,43 @@ public class JDTClassLoaderFactory extends ClassLoaderFactoryImpl {
   protected JavaSourceLoaderImpl makeSourceLoader(
       ClassLoaderReference classLoaderReference, IClassHierarchy cha, IClassLoader parent) {
     return new JDTSourceLoaderImpl(classLoaderReference, parent, cha, dump);
+  }
+  
+  protected IClassLoader makeNewClassLoaderWithPPA( ClassLoaderReference classLoaderReference,
+      IClassHierarchy cha,
+      IClassLoader parent,
+      AnalysisScope scope)
+      throws IOException {
+    if (classLoaderReference.equals(JavaSourceAnalysisScope.SOURCE)) {
+      ClassLoaderImpl cl = makeSourceLoader(classLoaderReference, cha, parent);
+      if(cl instanceof JDTSourceLoaderImpl) {
+        JDTSourceLoaderImpl jdt = (JDTSourceLoaderImpl)cl;
+        jdt.initWithPPA(scope.getModules(classLoaderReference));
+      }
+      
+      return cl;
+    } else {
+      return super.makeNewClassLoader(classLoaderReference, cha, parent, scope);
+    }
+  }
+ 
+  
+  @Override
+  public IClassLoader getPPALoader(ClassLoaderReference classLoaderReference, ClassHierarchy cha, AnalysisScope scope) throws IOException {
+    if (classLoaderReference == null) {
+      throw new IllegalArgumentException("null classLoaderReference");
+    }
+    IClassLoader result = map.get(classLoaderReference);
+    if (result == null) {
+      ClassLoaderReference parentRef = classLoaderReference.getParent();
+      IClassLoader parent = null;
+      if (parentRef != null) {
+        parent = getLoader(parentRef, cha, scope);
+      }
+      IClassLoader cl = makeNewClassLoaderWithPPA(classLoaderReference, cha, parent, scope);
+      map.put(classLoaderReference, cl);
+      result = cl;
+    }
+    return result;
   }
 }

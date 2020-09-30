@@ -12,6 +12,7 @@
 package com.ibm.wala.classLoader;
 
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
+import com.ibm.wala.ipa.cha.ClassHierarchy;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.types.ClassLoaderReference;
 import java.io.IOException;
@@ -29,4 +30,6 @@ public interface ClassLoaderFactory {
   IClassLoader getLoader(
       ClassLoaderReference classLoaderReference, IClassHierarchy cha, AnalysisScope scope)
       throws IOException;
+
+  IClassLoader getPPALoader(ClassLoaderReference ref, ClassHierarchy classHierarchy, AnalysisScope scope) throws IOException;
 }

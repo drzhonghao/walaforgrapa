@@ -24,4 +24,6 @@ import java.util.Set;
  */
 public interface SourceModuleTranslator {
   void loadAllSources(Set<ModuleEntry> modules);
+
+  void loadAllSourcesWithPPA(Set<ModuleEntry> modules);
 }

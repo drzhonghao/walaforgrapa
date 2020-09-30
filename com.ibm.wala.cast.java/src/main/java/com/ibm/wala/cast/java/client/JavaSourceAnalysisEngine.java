@@ -137,6 +137,20 @@ public abstract class JavaSourceAnalysisEngine
     }
     return cha;
   }
+  
+  public IClassHierarchy buildClassHierarchyWithPPA() {
+    IClassHierarchy cha = null;
+    ClassLoaderFactory factory = getClassLoaderFactory(scope.getExclusions());
+
+    try {
+      cha = ClassHierarchyFactory.makeWithPPA(getScope(), factory);
+    } catch (ClassHierarchyException e) {
+      System.err.println("Class Hierarchy construction failed");
+      System.err.println(e.toString());
+      e.printStackTrace();
+    }
+    return cha;
+  }
 
   @Override
   protected Iterable<Entrypoint> makeDefaultEntrypoints(AnalysisScope scope, IClassHierarchy cha) {

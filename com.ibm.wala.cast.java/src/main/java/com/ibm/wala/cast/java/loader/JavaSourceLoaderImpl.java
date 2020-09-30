@@ -48,6 +48,7 @@ import com.ibm.wala.classLoader.CallSiteReference;
 import com.ibm.wala.classLoader.ClassLoaderImpl;
 import com.ibm.wala.classLoader.IClass;
 import com.ibm.wala.classLoader.IClassLoader;
+import com.ibm.wala.classLoader.JarFileModule;
 import com.ibm.wala.classLoader.JavaLanguage.JavaInstructionFactory;
 import com.ibm.wala.classLoader.Language;
 import com.ibm.wala.classLoader.Module;
@@ -78,6 +79,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarFile;
 
 /** A {@link ClassLoaderImpl} that processes source file entities in the compile-time classpath. */
 public abstract class JavaSourceLoaderImpl extends ClassLoaderImpl {
@@ -598,6 +600,10 @@ public abstract class JavaSourceLoaderImpl extends ClassLoaderImpl {
   protected void loadAllSources(Set<ModuleEntry> modules) {
     getTranslator().loadAllSources(modules);
   }
+  
+  private void loadAllSourcesWithPPA(Set<ModuleEntry> modules) {
+    getTranslator().loadAllSourcesWithPPA(modules);
+  }
 
   protected abstract SourceModuleTranslator getTranslator();
   /* BEGIN Custom change: Optional deletion of fTypeMap */
@@ -612,6 +618,71 @@ public abstract class JavaSourceLoaderImpl extends ClassLoaderImpl {
     }
     /* END Custom change: Optional deletion of fTypeMap */
   }
+  
+  public void initWithPPA(List<Module> modules) throws IOException {
+    if (modules == null) {
+      throw new IllegalArgumentException("modules is null");
+    }
+
+    // module are loaded according to the given order (same as in Java VM)
+    Set<ModuleEntry> classModuleEntries = HashSetFactory.make();
+    Set<ModuleEntry> sourceModuleEntries = HashSetFactory.make();
+    for (Module archive : modules) {
+      boolean isJMODType = false;
+      if (archive instanceof JarFileModule) {
+        JarFile jarFile = ((JarFileModule) archive).getJarFile();
+        isJMODType = (jarFile != null) && jarFile.getName().endsWith(".jmod");
+      }
+   
+      // byte[] jarFileContents = null;
+      if (OPTIMIZE_JAR_FILE_IO && archive instanceof JarFileModule) {
+        // if we have a jar file, we read the whole thing into memory and operate on that; enables
+        // more
+        // efficient sequential I/O
+        // this is work in progress; for now, we read the file into memory and throw away the
+        // contents, which
+        // still gives a speedup for large jar files since it reads sequentially and warms up the FS
+        // cache. we get a small slowdown
+        // for smaller jar files or for jar files already in the FS cache. eventually, we should
+        // actually use the bytes read and eliminate the slowdown
+        // 11/22/10: I can't figure out a way to actually use the bytes without hurting performance.
+        //  Apparently,
+        // extracting files from a jar stored in memory via a JarInputStream is really slow compared
+        // to using
+        // a JarFile.  Will leave this as is for now.  --MS
+        // jarFileContents = archive instanceof JarFileModule ? getJarFileContents((JarFileModule)
+        // archive) : null;
+        getJarFileContents((JarFileModule) archive);
+      }
+      Set<ModuleEntry> classFiles = getClassFiles(archive);
+      removeClassFiles(classFiles, classModuleEntries);
+      Set<ModuleEntry> sourceFiles = getSourceFiles(archive);
+      Map<String, Object> allClassAndSourceFileContents = null;
+      if (OPTIMIZE_JAR_FILE_IO) {
+        // work in progress --MS
+        // if (archive instanceof JarFileModule) {
+        // final JarFileModule jfModule = (JarFileModule) archive;
+        // final String name = jfModule.getJarFile().getName();
+        // Map<String, Map<String, Long>> entrySizes = getEntrySizes(jfModule, name);
+        // allClassAndSourceFileContents = getAllClassAndSourceFileContents(jarFileContents, name,
+        // entrySizes);
+        // }
+        // jarFileContents = null;
+      }
+      loadAllClasses(classFiles, allClassAndSourceFileContents, isJMODType);
+      loadAllSourcesWithPPA(sourceFiles);
+      classModuleEntries.addAll(classFiles);
+      sourceModuleEntries.addAll(sourceFiles);
+    }
+      /* BEGIN Custom change: Optional deletion of fTypeMap */
+      if (deleteTypeMapAfterInit) {
+        fTypeMap = null;
+      }
+      /* END Custom change: Optional deletion of fTypeMap */
+    
+  }
+
+  
 
   public void defineFunction(
       CAstEntity n,

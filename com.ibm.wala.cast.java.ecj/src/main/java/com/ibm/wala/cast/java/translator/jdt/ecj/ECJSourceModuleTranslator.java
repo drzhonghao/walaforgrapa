@@ -255,4 +255,10 @@ public class ECJSourceModuleTranslator implements SourceModuleTranslator {
       }
     };
   }
+
+@Override
+public void loadAllSourcesWithPPA(Set<ModuleEntry> modules) {
+	
+	
+}
 }

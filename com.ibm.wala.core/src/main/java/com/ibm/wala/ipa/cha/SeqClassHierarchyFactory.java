@@ -76,7 +76,8 @@ public class SeqClassHierarchyFactory {
         languages,
         null,
         HashMapFactory.make(),
-        ClassHierarchy.MissingSuperClassHandling.NONE);
+        ClassHierarchy.MissingSuperClassHandling.NONE,
+        false);
   }
 
   public static ClassHierarchy make(

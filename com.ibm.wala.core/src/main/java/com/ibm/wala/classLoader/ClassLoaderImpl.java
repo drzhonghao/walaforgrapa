@@ -49,7 +49,7 @@ import java.util.jar.JarInputStream;
 public class ClassLoaderImpl implements IClassLoader {
   public static final int DEBUG_LEVEL = 0;
 
-  private static final boolean OPTIMIZE_JAR_FILE_IO = true;
+  protected static final boolean OPTIMIZE_JAR_FILE_IO = true;
 
   /** classes to ignore */
   private final SetOfClasses exclusions;
@@ -107,7 +107,7 @@ public class ClassLoaderImpl implements IClassLoader {
    * @return the Set of source files in the module
    */
   @SuppressWarnings("unused")
-  private Set<ModuleEntry> getSourceFiles(Module M) throws IOException {
+  protected Set<ModuleEntry> getSourceFiles(Module M) throws IOException {
     if (DEBUG_LEVEL > 0) {
       System.err.println("Get source files for " + M);
     }
@@ -135,7 +135,7 @@ public class ClassLoaderImpl implements IClassLoader {
    * @return the Set of class Files in the module
    */
   @SuppressWarnings("unused")
-  private Set<ModuleEntry> getClassFiles(Module M) throws IOException {
+  protected Set<ModuleEntry> getClassFiles(Module M) throws IOException {
     if (DEBUG_LEVEL > 0) {
       System.err.println("Get class files for " + M);
     }
@@ -163,7 +163,7 @@ public class ClassLoaderImpl implements IClassLoader {
   }
 
   /** Remove from s any class file module entries which already are in t */
-  private static void removeClassFiles(Set<ModuleEntry> s, Set<ModuleEntry> t) {
+  protected static void removeClassFiles(Set<ModuleEntry> s, Set<ModuleEntry> t) {
     s.removeAll(t);
   }
 
@@ -207,7 +207,7 @@ public class ClassLoaderImpl implements IClassLoader {
 
   /** Set up the set of classes loaded by this object. */
   @SuppressWarnings("unused")
-  private void loadAllClasses(
+  protected void loadAllClasses(
       Collection<ModuleEntry> moduleEntries, Map<String, Object> fileContents, boolean isJMODType) {
     for (ModuleEntry entry : moduleEntries) {
       // java11 support for jmod files
@@ -527,7 +527,7 @@ public class ClassLoaderImpl implements IClassLoader {
   }
 
   /** get the contents of a jar file. if any IO exceptions occur, catch and return null. */
-  private static void getJarFileContents(JarFileModule archive) {
+  protected static void getJarFileContents(JarFileModule archive) {
     String jarFileName = archive.getJarFile().getName();
     InputStream s = null;
     try {
@@ -678,4 +678,8 @@ public class ClassLoaderImpl implements IClassLoader {
   public SSAInstructionFactory getInstructionFactory() {
     return getLanguage().instructionFactory();
   }
+
+  
+
+ 
 }
